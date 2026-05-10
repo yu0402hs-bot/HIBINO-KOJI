@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麹レシピ帖 | 塩麹・醤油麹・甘麹・にんにく麹</title>
+  <style>
+    /* ===== 基本設定 ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #fdf8f0;
+      --light: #faf5eb;
+      --brown: #8b5e3c;
+      --dark: #4a3728;
+      --gold: #c9a84c;
+      --green: #7a9e7e;
+      --pink: #d4847a;
+      --blue: #7a9eb5;
+      --purple: #9b7ab5;
+      --text: #3a2e25;
+      --gray: #888;
+      --border: #e8d5b0;
+    }
+
+    body {
+      font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ===== ヘッダー ===== */
+    header {
+      background: #fff;
+      border-bottom: 2px dashed var(--border);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      color: var(--dark);
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .logo span { color: var(--gold); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--brown);
+      font-size: 0.88rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover {
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    /* ===== ヒーロー ===== */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem;
+      background: linear-gradient(180deg, #fff 0%, var(--cream) 100%);
+      border-bottom: 2px dashed var(--border);
+    }
+
+    /* 色鉛筆風タイトル装飾 */
+    .hero-illust {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      filter: drop-shadow(2px 2px 0 rgba(201,168,76,0.3));
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      color: var(--dark);
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+      border-bottom: 3px solid var(--gold);
+      padding-bottom: 2px;
+    }
+
+    .hero p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ===== カテゴリータブ ===== */
+    .category-bar {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 2rem 2rem 0;
+    }
+
+    .cat-btn {
+      padding: 0.5rem 1.4rem;
+      border: 2px solid var(--border);
+      background: #fff;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: var(--brown);
+      transition: all 0.2s;
+    }
+
+    .cat-btn:hover,
+    .cat-btn.active {
+      background: var(--brown);
+      border-color: var(--brown);
+      color: #fff;
+    }
+
+    /* カテゴリー色 */
+    .cat-btn[data-cat="塩麹"].active    { background: var(--blue);   border-color: var(--blue); }
+    .cat-btn[data-cat="醤油麹"].active  { background: var(--brown);  border-color: var(--brown); }
+    .cat-btn[data-cat="甘麹"].active    { background: var(--pink);   border-color: var(--pink); }
+    .cat-btn[data-cat="にんにく麹"].active { background: var(--green); border-color: var(--green); }
+
+    /* ===== レシピグリッド ===== */
+    .recipes-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    .section-count {
+      font-size: 0.85rem;
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+    }
+
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    /* ===== レシピカード ===== */
+    /*
+    ==========================================
+    ★ レシピを追加するときはこのカードをコピペ！
+    ==========================================
+    */
+    .recipe-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(139,94,60,0.12);
+    }
+
+    /* 色鉛筆風イラストエリア */
+    .card-illust {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* カテゴリー別の背景色 */
+    .card-illust.shiokoji   { background: linear-gradient(135deg, #e8f4f8, #d0e8f0); }
+    .card-illust.shoyukoji  { background: linear-gradient(135deg, #f5e8d0, #ead4b0); }
+    .card-illust.amazakoji  { background: linear-gradient(135deg, #fde8e8, #f8d0d0); }
+    .card-illust.ninniku    { background: linear-gradient(135deg, #e8f5e8, #d0ebd0); }
+
+    /* 色鉛筆タッチの質感 */
+    .card-illust::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 3px,
+          rgba(255,255,255,0.15) 3px,
+          rgba(255,255,255,0.15) 4px
+        );
+    }
+
+    .card-illust-emoji {
+      font-size: 5rem;
+      filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.08));
+      position: relative;
+      z-index: 1;
+    }
+
+    /* カテゴリーバッジ */
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: bold;
+      z-index: 2;
+    }
+
+    .badge-shiokoji   { background: var(--blue); }
+    .badge-shoyukoji  { background: var(--brown); }
+    .badge-amazakoji  { background: var(--pink); }
+    .badge-ninniku    { background: var(--green); }
+
+    /* 難易度 */
+    .card-level {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.85);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      color: var(--brown);
+      z-index: 2;
+    }
+
+    .card-body { padding: 1.2rem; }
+
+    .card-title {
+      font-size: 1.05rem;
+      color: var(--dark);
+      margin-bottom: 0.4rem;
+      font-weight: bold;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.78rem;
+      color: var(--gray);
+    }
+
+    .card-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* ===== モーダル（レシピ詳細） ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(74,55,40,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-illust {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .modal-body { padding: 1.8rem; }
+
+    .modal-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      color: #fff;
+      margin-bottom: 0.8rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-desc {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+
+    .modal-meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--light);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-meta-item { font-size: 0.85rem; color: var(--brown); }
+    .modal-meta-item strong { display: block; font-size: 1.1rem; color: var(--dark); }
+
+    .modal h3 {
+      font-size: 1rem;
+      color: var(--dark);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px dashed var(--border);
+    }
+
+    .ingredients-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .ingredients-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .ingredients-list li span { color: var(--gray); }
+
+    .steps-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+      counter-reset: step;
+    }
+
+    .steps-list li {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      counter-increment: step;
+    }
+
+    .step-num {
+      min-width: 28px;
+      height: 28px;
+      background: var(--gold);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .modal-tip {
+      background: #fffbf0;
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--brown);
+      margin-bottom: 1rem;
+    }
+
+    .modal-tip::before { content: '💡 '; }
+
+    .btn-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* BASEへのリンク */
+    .btn-to-base {
+      display: block;
+      text-align: center;
+      background: var(--brown);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.9rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      transition: background 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-to-base:hover { background: var(--dark); }
+
+    /* ===== フッター ===== */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 2.5rem;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .hero { padding: 3rem 1.5rem 2rem; }
+      .recipes-section { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header>
+  <a href="#" class="logo">麹<span>レシピ</span>帖</a>
+  <nav>
+    <ul>
+      <li><a href="#recipes">レシピ一覧</a></li>
+      <li><a href="https://hanako04.base.shop/" target="_blank">🛒 調味料を買う</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ヒーロー -->
+<section class="hero">
+  <div class="hero-illust">🍙✨🥢</div>
+  <h1>麹調味料で作る<br><em>かんたん</em>おいしいレシピ</h1>
+  <p>塩麹・醤油麹・甘麹・にんにく麹を使った、毎日の料理が楽しくなるレシピ集です。</p>
+</section>
+
+<!-- カテゴリータブ -->
+<div class="category-bar">
+  <button class="cat-btn active" data-cat="すべて" onclick="filterRecipes('すべて', this)">すべて</button>
+  <button class="cat-btn" data-cat="塩麹" onclick="filterRecipes('塩麹', this)">🧂 塩麹</button>
+  <button class="cat-btn" data-cat="醤油麹" onclick="filterRecipes('醤油麹', this)">🫙 醤油麹</button>
+  <button class="cat-btn" data-cat="甘麹" onclick="filterRecipes('甘麹', this)">🍶 甘麹</button>
+  <button class="cat-btn" data-cat="にんにく麹" onclick="filterRecipes('にんにく麹', this)">🧄 にんにく麹</button>
+</div>
+
+<!-- レシピ一覧 -->
+<section class="recipes-section" id="recipes">
+  <p class="section-count" id="count"></p>
+  <div class="recipes-grid" id="grid"></div>
+</section>
+
+<!-- レシピ詳細モーダル -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <button class="btn-close" onclick="closeModal()">✕</button>
+    <div id="modal-inner"></div>
+  </div>
+</div>
+
+<!-- フッター -->
+<footer>
+  <p style="margin-bottom:0.5rem;">🌾 麹レシピ帖</p>
+  <p>調味料は <a href="https://hanako04.base.shop/" target="_blank">こちらのショップ</a> でお買い求めいただけます</p>
+  <p style="margin-top:1rem;">&copy; 2026 HIBINO KOJI. All rights reserved.</p>
+</footer>
+
+<script>
+// ============================================================
+// ★ レシピデータ（ここを編集してレシピを追加・変更できます）
+//
+// 追加方法：下のレシピのかたまり { ... } をコピーして
+//           最後のレシピの後にカンマ区切りで貼り付けてください！
+// ============================================================
+const recipes = [
+
+  // --- 塩麹レシピ ---
+  {
+    id: 1,
+    category: "塩麹",              // カテゴリー
+    emoji: "🐔",                   // 絵文字（料理のイメージ）
+    title: "鶏むね肉の塩麹焼き",    // レシピ名
+    desc: "塩麹に漬けるだけでびっくりするほどやわらかい！シンプルだけど絶品のメイン料理。",
+    time: "15分",                  // 調理時間
+    serving: "2人分",
+    level: "⭐ 簡単",
+    ingredients: [                 // 材料リスト
+      { name: "鶏むね肉", amount: "1枚（300g）" },
+      { name: "塩麹", amount: "大さじ2" },
+      { name: "オリーブオイル", amount: "小さじ1" },
+    ],
+    steps: [                       // 作り方
+      "鶏むね肉を薄くそぎ切りにする。",
+      "塩麹を全体によくなじませ、30分〜一晩漬け込む。",
+      "フライパンにオリーブオイルを熱し、中火で両面焼く（各3分ずつ）。",
+      "火が通ったら盛り付けて完成！",
+    ],
+    tip: "漬け込む時間が長いほどやわらかく仕上がります。前日に仕込むのがおすすめ！",
+  },
+
+  {
+    id: 2,
+    category: "塩麹",
+    emoji: "🥗",
+    title: "きゅうりの塩麹漬け",
+    desc: "10分でできる超簡単おつまみ。塩麹の旨みがきゅうりにしみてやみつきに。",
+    time: "10分",
+    serving: "2人分",
+    level: "⭐ 簡単",
+    ingredients: [
+      { name: "きゅうり", amount: "2本" },
+      { name: "塩麹", amount: "大さじ1" },
+      { name: "ごま油", amount: "少々" },
+      { name: "白ごま", amount: "お好みで" },
+    ],
+    steps: [
+      "きゅうりを乱切りにする。",
+      "ビニール袋にきゅうりと塩麹を入れてよく揉む。",
+      "10分おいて味をなじませる。",
+      "ごま油を少々たらして器に盛り、ごまをふって完成！",
+    ],
+    tip: "冷蔵庫で1日おくとさらに美味しくなります。翌日のお弁当にも！",
+  },
+
+  // --- 醤油麹レシピ ---
+  {
+    id: 3,
+    category: "醤油麹",
+    emoji: "🍳",
+    title: "醤油麹の卵かけご飯",
+    desc: "いつもの卵かけご飯が格上げに。醤油麹の旨みと甘みがたまらない朝ごはん。",
+    time: "5分",
+    serving: "1人分",
+    level: "⭐ 簡単",
+    ingredients: [
+      { name: "ご飯", amount: "1膳" },
+      { name: "卵", amount: "1個" },
+      { name: "醤油麹", amount: "小さじ1" },
+    ],
+    steps: [
+      "温かいご飯をお茶碗に盛る。",
+      "卵を割り入れる。",
+      "醤油麹を小さじ1のせて混ぜながらいただく。",
+    ],
+    tip: "醤油代わりに使うだけ！お好みで刻みのりやネギをのせても美味しいです。",
+  },
+
+  {
+    id: 4,
+    category: "醤油麹",
+    emoji: "🥩",
+    title: "豚バラ醤油麹炒め",
+    desc: "醤油麹の深い旨みが豚バラにしっかりなじむ。ご飯が止まらない一品！",
+    time: "15分",
+    serving: "2人分",
+    level: "⭐⭐ 普通",
+    ingredients: [
+      { name: "豚バラ肉", amount: "200g" },
+      { name: "醤油麹", amount: "大さじ2" },
+      { name: "キャベツ", amount: "1/4個" },
+      { name: "ごま油", amount: "小さじ1" },
+    ],
+    steps: [
+      "豚バラ肉を食べやすい大きさに切り、醤油麹を揉み込んで10分おく。",
+      "キャベツをざく切りにする。",
+      "フライパンにごま油を熱し、豚バラを炒める。",
+      "肉に火が通ったらキャベツを加え、さっと炒めて完成！",
+    ],
+    tip: "仕上げに醤油麹をちょっと足すと香りがアップします。",
+  },
+
+  // --- 甘麹レシピ ---
+  {
+    id: 5,
+    category: "甘麹",
+    emoji: "🥤",
+    title: "甘麹スムージー",
+    desc: "砂糖不使用なのにやさしい甘さ。バナナと合わせるだけの栄養満点ドリンク。",
+    time: "5分",
+    serving: "1人分",
+    level: "⭐ 簡単",
+    ingredients: [
+      { name: "甘麹", amount: "大さじ3" },
+      { name: "バナナ", amount: "1本" },
+      { name: "牛乳（or豆乳）", amount: "150ml" },
+      { name: "氷", amount: "適量" },
+    ],
+    steps: [
+      "すべての材料をミキサーに入れる。",
+      "なめらかになるまで混ぜて完成！",
+    ],
+    tip: "凍らせたバナナを使うとアイス感がアップして夏にぴったり！",
+  },
+
+  {
+    id: 6,
+    category: "甘麹",
+    emoji: "🍗",
+    title: "甘麹の照り焼きチキン",
+    desc: "砂糖なしで自然な甘みとツヤが出る。麹の力でやわらかジューシーな仕上がり。",
+    time: "20分",
+    serving: "2人分",
+    level: "⭐⭐ 普通",
+    ingredients: [
+      { name: "鶏もも肉", amount: "1枚" },
+      { name: "甘麹", amount: "大さじ3" },
+      { name: "醤油", amount: "大さじ1" },
+      { name: "みりん", amount: "大さじ1" },
+    ],
+    steps: [
+      "鶏もも肉を甘麹・醤油・みりんで30分漬け込む。",
+      "フライパンを中火で熱し、皮目から焼く（5分）。",
+      "裏返してフタをして弱火で8分蒸し焼き。",
+      "漬けダレを加えて照りが出たら完成！",
+    ],
+    tip: "甘麹が砂糖の代わりになるので、みりんなしでも美味しくできます。",
+  },
+
+  // --- にんにく麹レシピ ---
+  {
+    id: 7,
+    category: "にんにく麹",
+    emoji: "🍝",
+    title: "にんにく麹のパスタ",
+    desc: "にんにく麹ひとさじで本格イタリアンの味わいに。旨みが全然違う！",
+    time: "15分",
+    serving: "2人分",
+    level: "⭐⭐ 普通",
+    ingredients: [
+      { name: "パスタ", amount: "200g" },
+      { name: "にんにく麹", amount: "大さじ2" },
+      { name: "オリーブオイル", amount: "大さじ3" },
+      { name: "鷹の爪", amount: "1本" },
+      { name: "パセリ", amount: "適量" },
+    ],
+    steps: [
+      "パスタを表示通りに茹でる（茹で汁をとっておく）。",
+      "フライパンにオリーブオイルと鷹の爪を入れ弱火で熱する。",
+      "にんにく麹を加えてさっと炒める。",
+      "茹でたパスタと茹で汁少々を加えてよく混ぜる。",
+      "パセリをちらして完成！",
+    ],
+    tip: "にんにく麹に塩気があるので塩は控えめに。仕上げに粉チーズも合います！",
+  },
+
+  {
+    id: 8,
+    category: "にんにく麹",
+    emoji: "🥦",
+    title: "にんにく麹の野菜炒め",
+    desc: "炒め物の味付けはにんにく麹ひとつでOK。シンプルだけどプロっぽい仕上がりに。",
+    time: "10分",
+    serving: "2人分",
+    level: "⭐ 簡単",
+    ingredients: [
+      { name: "ブロッコリー", amount: "1/2個" },
+      { name: "パプリカ", amount: "1個" },
+      { name: "にんにく麹", amount: "大さじ1.5" },
+      { name: "ごま油", amount: "大さじ1" },
+    ],
+    steps: [
+      "野菜を食べやすいサイズに切る。",
+      "フライパンにごま油を熱し、野菜を炒める。",
+      "にんにく麹を加えてさっと混ぜ、全体になじんだら完成！",
+    ],
+    tip: "お好みの野菜でアレンジOK。きのこ類を入れると旨みがさらにアップ！",
+  },
+
+]; // ← レシピデータここまで
+
+
+// ============================================================
+// 以下はサイトの動きを制御するプログラムです（変更不要）
+// ============================================================
+
+// カテゴリーカラー設定
+const catClass = {
+  "塩麹":    { illust: "shiokoji",  badge: "badge-shiokoji" },
+  "醤油麹":  { illust: "shoyukoji", badge: "badge-shoyukoji" },
+  "甘麹":    { illust: "amazakoji", badge: "badge-amazakoji" },
+  "にんにく麹": { illust: "ninniku", badge: "badge-ninniku" },
+};
+
+// レシピカード生成
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  const count = document.getElementById('count');
+  count.textContent = `${list.length}件のレシピ`;
+  grid.innerHTML = list.map(r => {
+    const c = catClass[r.category];
+    return `
+      <div class="recipe-card" onclick="openModal(${r.id})">
+        <div class="card-illust ${c.illust}">
+          <span class="card-badge ${c.badge}">${r.category}</span>
+          <span class="card-level">${r.level}</span>
+          <span class="card-illust-emoji">${r.emoji}</span>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title">${r.title}</h2>
+          <p class="card-desc">${r.desc}</p>
+          <div class="card-meta">
+            <span>⏱ ${r.time}</span>
+            <span>👥 ${r.serving}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// カテゴリーフィルター
+function filterRecipes(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = cat === 'すべて' ? recipes : recipes.filter(r => r.category === cat);
+  renderCards(list);
+}
+
+// モーダルを開く
+function openModal(id) {
+  const r = recipes.find(r => r.id === id);
+  if (!r) return;
+  const c = catClass[r.category];
+  document.getElementById('modal-inner').innerHTML = `
+    <div class="modal-illust card-illust ${c.illust}" style="border-radius:20px 20px 0 0; height:200px;">
+      <span style="font-size:7rem;">${r.emoji}</span>
+    </div>
+    <div class="modal-body">
+      <span class="modal-badge ${c.badge}">${r.category}</span>
+      <h2 class="modal-title">${r.title}</h2>
+      <p class="modal-desc">${r.desc}</p>
+      <div class="modal-meta">
+        <div class="modal-meta-item"><strong>${r.time}</strong>調理時間</div>
+        <div class="modal-meta-item"><strong>${r.serving}</strong>分量</div>
+        <div class="modal-meta-item"><strong>${r.level}</strong>難易度</div>
+      </div>
+      <h3>材料</h3>
+      <ul class="ingredients-list">
+        ${r.ingredients.map(i => `<li>${i.name}<span>${i.amount}</span></li>`).join('')}
+      </ul>
+      <h3>作り方</h3>
+      <ol class="steps-list">
+        ${r.steps.map((s, i) => `<li><span class="step-num">${i+1}</span>${s}</li>`).join('')}
+      </ol>
+      ${r.tip ? `<div class="modal-tip">${r.tip}</div>` : ''}
+      <a href="https://hanako04.base.shop/" target="_blank" class="btn-to-base">
+        🛒 ${r.category}を購入する
+      </a>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// モーダルを閉じる
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal') || e.type === 'click') {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// キーボードでモーダルを閉じる
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// 初期表示
+renderCards(recipes);
+</script>
+</body>
+</html>
