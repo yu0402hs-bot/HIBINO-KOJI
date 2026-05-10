@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麹調味料 3種セット｜麹の蔵</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f8f6f3;
+      --border: #e8e4de;
+      --text: #1a1a1a;
+      --sub: #6b6b6b;
+      --accent: #c9a84c;
+      --btn: #2a2a2a;
+      --btn-hover: #444;
+      --red: #c0392b;
+    }
+
+    body {
+      font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ヘッダー */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .header-nav a {
+      font-size: 13px;
+      color: var(--sub);
+      transition: color 0.15s;
+    }
+
+    .header-nav a:hover { color: var(--text); }
+
+    .cart-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .cart-btn:hover { border-color: var(--text); }
+
+    /* パンくず */
+    .breadcrumb {
+      padding: 12px 24px;
+      font-size: 12px;
+      color: var(--sub);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb a { color: var(--sub); }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* メインレイアウト */
+    .product-layout {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+
+    /* 画像ギャラリー */
+    .gallery { position: sticky; top: 72px; align-self: start; }
+
+    .main-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: zoom-in;
+      position: relative;
+    }
+
+    .main-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .main-img .emoji { font-size: 5rem; }
+
+    .thumbnails {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .thumb {
+      aspect-ratio: 1;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .thumb.active { border-color: var(--text); }
+    .thumb:hover { border-color: var(--border); }
+
+    /* 商品情報 */
+    .product-info {}
+
+    .product-tag-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      background: var(--bg2);
+      color: var(--sub);
+      border-radius: 2px;
+    }
+
+    .tag.red { background: #fef0ee; color: var(--red); }
+
+    .product-title {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .product-subtitle {
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .price {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .price-tax {
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .price-old {
+      font-size: 14px;
+      color: var(--sub);
+      text-decoration: line-through;
+    }
+
+    .price-off {
+      font-size: 12px;
+      color: var(--red);
+      background: #fef0ee;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    .shipping-note {
+      font-size: 12px;
+      color: var(--sub);
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .shipping-note strong { color: var(--text); }
+
+    /* バリエーション */
+    .option-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      color: var(--sub);
+      text-transform: uppercase;
+    }
+
+    .variations {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .var-btn {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      background: none;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .var-btn.active {
+      border-color: var(--text);
+      background: var(--text);
+      color: #fff;
+    }
+
+    .var-btn:hover:not(.active) { border-color: var(--text); }
+
+    /* 数量 */
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 16px;
+      width: fit-content;
+      border: 1px solid var(--border);
+    }
+
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    .qty-btn:hover { background: var(--bg2); }
+
+    .qty-num {
+      width: 52px;
+      height: 40px;
+      text-align: center;
+      border: none;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    /* ボタン */
+    .btn-add-cart {
+      width: 100%;
+      padding: 16px;
+      background: var(--btn);
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 10px;
+      transition: background 0.15s;
+    }
+
+    .btn-add-cart:hover { background: var(--btn-hover); }
+
+    .btn-buy-now {
+      width: 100%;
+      padding: 16px;
+      background: none;
+      color: var(--text);
+      border: 1px solid var(--text);
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 20px;
+      transition: all 0.15s;
+    }
+
+    .btn-buy-now:hover { background: var(--text); color: #fff; }
+
+    /* 配送情報 */
+    .delivery-box {
+      background: var(--bg2);
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+
+    .delivery-box .d-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .delivery-box .d-row:last-child { border-bottom: none; }
+
+    .delivery-box .d-label { color: var(--sub); }
+
+    /* ポイント・特典 */
+    .benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .benefit-item .icon { font-size: 15px; }
+
+    /* 詳細説明 */
+    .product-detail {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .detail-section { margin-bottom: 48px; }
+
+    .detail-heading {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .detail-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 2;
+      margin-bottom: 16px;
+    }
+
+    .highlight-box {
+      background: var(--bg2);
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .highlight-box p {
+      font-size: 14px;
+      line-height: 2;
+      color: var(--text);
+    }
+
+    /* 商品スペック */
+    .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .spec-table tr { border-bottom: 1px solid var(--border); }
+
+    .spec-table th {
+      width: 140px;
+      padding: 12px 16px;
+      background: var(--bg2);
+      font-weight: 600;
+      text-align: left;
+      color: var(--sub);
+      vertical-align: top;
+    }
+
+    .spec-table td {
+      padding: 12px 16px;
+      line-height: 1.8;
+    }
+
+    /* 3カラム特徴 */
+    .feature-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .feature-col {
+      text-align: center;
+      padding: 24px 16px;
+      border: 1px solid var(--border);
+    }
+
+    .feature-col .f-icon { font-size: 2rem; margin-bottom: 10px; }
+    .feature-col h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .feature-col p { font-size: 12px; color: var(--sub); line-height: 1.8; }
+
+    /* レビュー */
+    .review-summary {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .review-big-num {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .review-stars-big { font-size: 22px; color: var(--accent); letter-spacing: 2px; }
+
+    .review-count { font-size: 12px; color: var(--sub); }
+
+    .review-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .review-item {
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .review-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .reviewer { font-size: 13px; font-weight: 700; }
+
+    .review-date { font-size: 11px; color: var(--sub); }
+
+    .review-stars { font-size: 13px; color: var(--accent); margin-bottom: 8px; }
+
+    .review-body { font-size: 13px; color: var(--text); line-height: 1.9; }
+
+    /* 関連商品 */
+    .related {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .related-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .related-card { cursor: pointer; }
+
+    .related-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      transition: opacity 0.15s;
+    }
+
+    .related-card:hover .related-img { opacity: 0.8; }
+
+    .related-name { font-size: 13px; margin-bottom: 4px; line-height: 1.5; }
+
+    .related-price { font-size: 13px; font-weight: 700; }
+
+    /* フッター */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      list-style: none;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-copy { font-size: 11px; color: var(--sub); }
+
+    /* 通知バナー */
+    .notice-bar {
+      background: #2a2a2a;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .notice-bar a { color: var(--accent); text-decoration: underline; }
+
+    /* モバイル */
+    @media (max-width: 700px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 16px;
+      }
+
+      .gallery { position: static; }
+
+      .header-nav { display: none; }
+
+      .feature-cols { grid-template-columns: 1fr; }
+
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .product-detail, .related { padding: 32px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 通知バナー -->
+<div class="notice-bar">
+  🌸 母の日ギフト受付中 ── 5月7〜10日お届け対応 ｜ <a href="#">詳しくはこちら</a>
+</div>
+
+<!-- ヘッダー -->
+<header>
+  <div class="logo">麹の蔵</div>
+  <div class="header-right">
+    <ul class="header-nav">
+      <li><a href="#">商品一覧</a></li>
+      <li><a href="#">使い方・レシピ</a></li>
+      <li><a href="#">こだわり</a></li>
+      <li><a href="#">お問い合わせ</a></li>
+    </ul>
+    <button class="cart-btn" onclick="alert('カート機能は実装予定です')">
+      🛒 カート (0)
+    </button>
+  </div>
+</header>
+
+<!-- パンくず -->
+<div class="breadcrumb">
+  <a href="#">トップ</a><span>/</span>
+  <a href="#">調味料・ソース</a><span>/</span>
+  麹調味料 3種セット
+</div>
+
+<!-- 商品メイン -->
+<div class="product-layout">
+
+  <!-- 左：ギャラリー -->
+  <div class="gallery">
+    <div class="main-img" id="mainImg">
+      <span class="emoji" id="mainEmoji">🫙</span>
+    </div>
+    <div class="thumbnails">
+      <div class="thumb active" onclick="setThumb(this, '🫙')">🫙</div>
+      <div class="thumb" onclick="setThumb(this, '🧂')">🧂</div>
+      <div class="thumb" onclick="setThumb(this, '🍶')">🍶</div>
+      <div class="thumb" onclick="setThumb(this, '🎁')">🎁</div>
+      <div class="thumb" onclick="setThumb(this, '🌾')">🌾</div>
+    </div>
+  </div>
+
+  <!-- 右：商品情報 -->
+  <div class="product-info">
+
+    <div class="product-tag-row">
+      <span class="tag red">送料込み</span>
+      <span class="tag">無添加</span>
+      <span class="tag">国産原料100%</span>
+      <span class="tag">ギフト対応</span>
+    </div>
+
+    <h1 class="product-title">
+      麹調味料 3種セット<br>
+      <small style="font-size:14px; font-weight:400; color:#6b6b6b;">塩麹・醤油麹・甘酒 各200g</small>
+    </h1>
+
+    <p class="product-subtitle">
+      野菜と米麹だけで作った、無添加の万能調味料。<br>
+      熟成6ヶ月以上の深いコクと旨みをそのままお届けします。
+    </p>
+
+    <div class="price-row">
+      <span class="price">¥3,600</span>
+      <span class="price-tax">税込</span>
+      <span class="price-old">¥4,200</span>
+      <span class="price-off">14% OFF</span>
+    </div>
+
+    <div class="shipping-note">
+      <strong>送料込み</strong>（ヤマト冷蔵便）｜ 2〜3営業日で発送
+    </div>
+
+    <!-- バリエーション -->
+    <div class="option-label">セット内容を選ぶ</div>
+    <div class="variations">
+      <button class="var-btn active" onclick="selectVar(this)">3種セット</button>
+      <button class="var-btn" onclick="selectVar(this)">塩麹のみ</button>
+      <button class="var-btn" onclick="selectVar(this)">醤油麹のみ</button>
+      <button class="var-btn" onclick="selectVar(this)">甘酒のみ</button>
+    </div>
+
+    <!-- 数量 -->
+    <div class="option-label">数量</div>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <input class="qty-num" type="number" id="qty" value="1" min="1" max="99">
+      <button class="qty-btn" onclick="changeQty(1)">＋</button>
+    </div>
+
+    <a href="https://hanako04.base.shop/" target="_blank" class="btn-add-cart" style="display:block; text-align:center;">カートに入れる</a>
+    <a href="https://hanako04.base.shop/" target="_blank" class="btn-buy-now" style="display:block; text-align:center;">今すぐ購入する</a>
+
+    <!-- 配送情報 -->
+    <div class="delivery-box">
+      <div class="d-row">
+        <span class="d-label">配送方法</span>
+        <span>ヤマト運輸 クール便（冷蔵）</span>
+      </div>
+      <div class="d-row">
+        <span class="d-label">送料</span>
+        <span><strong>無料</strong>（全国一律）</span>
+      </div>
+      <div class="d-row">
+        <span class="d-label">発送日目安</span>
+        <span>ご注文から2〜3営業日</span>
+      </div>
+      <div class="d-row">
+        <span class="d-label">お届け日時</span>
+        <span>ご指定いただけます</span>
+      </div>
+    </div>
+
+    <!-- 特典 -->
+    <div class="benefits">
+      <div class="benefit-item">
+        <span class="icon">📖</span>
+        <span>麹料理レシピブック付き（非売品）</span>
+      </div>
+      <div class="benefit-item">
+        <span class="icon">💳</span>
+        <span>クレジットカード・銀行振込・代引き対応</span>
+      </div>
+      <div class="benefit-item">
+        <span class="icon">🔄</span>
+        <span>到着後7日以内の返品・交換保証</span>
+      </div>
+      <div class="benefit-item">
+        <span class="icon">🎁</span>
+        <span>ギフト包装・のし対応（無料）</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 商品詳細 -->
+<div class="product-detail">
+
+  <!-- 商品説明 -->
+  <div class="detail-section">
+    <div class="detail-heading">商品について</div>
+
+    <div class="feature-cols">
+      <div class="feature-col">
+        <div class="f-icon">🌾</div>
+        <h4>国産原料100%</h4>
+        <p>米・大豆・塩はすべて産地確認済みの国産品のみを使用</p>
+      </div>
+      <div class="feature-col">
+        <div class="f-icon">⏳</div>
+        <h4>熟成6ヶ月以上</h4>
+        <p>じっくり時間をかけた熟成が生み出す深いコクと旨み</p>
+      </div>
+      <div class="feature-col">
+        <div class="f-icon">✨</div>
+        <h4>完全無添加</h4>
+        <p>保存料・着色料・化学調味料ゼロ。麹の力だけで仕上げます</p>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p>
+        麹の蔵の調味料は、農薬不使用の国産米と天然塩だけで仕込んだ本物の麹から作られています。
+        毎朝、職人が温度と湿度を手で確認しながら育てる麹は、季節ごとに表情が異なります。
+        そのひとつひとつの個性を活かした調味料は、どれも「そのまま食べても美味しい」と言っていただける仕上がりです。
+      </p>
+    </div>
+
+    <p class="detail-text">
+      <strong>塩麹</strong>は肉や魚の下味に。漬けるだけでたんぱく質が分解され、やわらかくジューシーに仕上がります。野菜炒めに加えると、シンプルな味付けでも驚くほど美味しくなります。
+    </p>
+    <p class="detail-text">
+      <strong>醤油麹</strong>は醤油の旨みと麹の甘みが融合した万能だれ。冷奴・納豆・炒め物・煮物と、どんな料理にも合います。普通の醤油の代わりにそのまま使えます。
+    </p>
+    <p class="detail-text">
+      <strong>甘酒</strong>は砂糖不使用なのに自然でやさしい甘さ。そのまま飲む・料理の甘みに使う・スムージーに混ぜるなど、毎日の生活に取り入れやすい一品です。
+    </p>
+  </div>
+
+  <!-- 仕様 -->
+  <div class="detail-section">
+    <div class="detail-heading">商品仕様</div>
+    <table class="spec-table">
+      <tr>
+        <th>内容量</th>
+        <td>塩麹 200g × 1、醤油麹 200g × 1、甘酒 200g × 1</td>
+      </tr>
+      <tr>
+        <th>原材料</th>
+        <td>
+          塩麹：米麹（国産米）、食塩（国産）<br>
+          醤油麹：米麹（国産米）、醤油（国産大豆・小麦）<br>
+          甘酒：米麹（国産米）、水
+        </td>
+      </tr>
+      <tr>
+        <th>保存方法</th>
+        <td>要冷蔵（10℃以下）。開封後はお早めにお使いください。</td>
+      </tr>
+      <tr>
+        <th>賞味期限</th>
+        <td>製造日より90日（未開封）</td>
+      </tr>
+      <tr>
+        <th>アレルギー</th>
+        <td>小麦・大豆（醤油麹のみ）</td>
+      </tr>
+      <tr>
+        <th>製造者</th>
+        <td>麹の蔵 / 〒000-0000 ●●県●●市●●1-1-1</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- レビュー -->
+  <div class="detail-section">
+    <div class="detail-heading">お客様レビュー</div>
+
+    <div class="review-summary">
+      <div>
+        <div class="review-big-num">4.9</div>
+        <div class="review-stars-big">★★★★★</div>
+        <div class="review-count">38件のレビュー</div>
+      </div>
+    </div>
+
+    <div class="review-list">
+      <div class="review-item">
+        <div class="review-item-top">
+          <span class="reviewer">山田 花子</span>
+          <span class="review-date">2026年3月12日</span>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">
+          塩麹を使いはじめて3ヶ月。鶏むね肉がびっくりするほどやわらかくなって、家族全員が気に入っています。
+          醤油麹は冷奴にかけるだけで本当に美味しい。3種セットを買って正解でした。次回もリピートします！
+        </p>
+      </div>
+      <div class="review-item">
+        <div class="review-item-top">
+          <span class="reviewer">鈴木 太郎</span>
+          <span class="review-date">2026年2月28日</span>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">
+          母へのプレゼントに贈りました。「こんな美味しい調味料は初めて」と大喜びでした。
+          ギフト包装も丁寧で、レシピブックも一緒に入っていて喜んでいました。また注文します。
+        </p>
+      </div>
+      <div class="review-item">
+        <div class="review-item-top">
+          <span class="reviewer">佐藤 めぐみ</span>
+          <span class="review-date">2026年1月15日</span>
+        </div>
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-body">
+          甘酒は毎朝飲んでいます。市販品とは全然違う、自然でやさしい甘さ。
+          料理にも使いやすくて、かぼちゃの煮物に入れたら砂糖なしでも十分甘くなりました。
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 関連商品 -->
+<div class="related">
+  <div class="related-title">関連商品</div>
+  <div class="related-grid">
+    <div class="related-card">
+      <div class="related-img">🧂</div>
+      <div class="related-name">塩麹 大容量 (400g)</div>
+      <div class="related-price">¥1,680</div>
+    </div>
+    <div class="related-card">
+      <div class="related-img">🍶</div>
+      <div class="related-name">甘酒 飲み比べセット</div>
+      <div class="related-price">¥2,200</div>
+    </div>
+    <div class="related-card">
+      <div class="related-img">🌸</div>
+      <div class="related-name">梅塩麹 (季節限定)</div>
+      <div class="related-price">¥1,200</div>
+    </div>
+    <div class="related-card">
+      <div class="related-img">📦</div>
+      <div class="related-name">月イチ麹便（定期）</div>
+      <div class="related-price">¥1,980〜/月</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<footer>
+  <div class="footer-logo">麹の蔵</div>
+  <ul class="footer-links">
+    <li><a href="#">特定商取引法に基づく表記</a></li>
+    <li><a href="#">プライバシーポリシー</a></li>
+    <li><a href="#">返品・交換について</a></li>
+    <li><a href="#">よくある質問</a></li>
+    <li><a href="#">お問い合わせ</a></li>
+  </ul>
+  <div class="footer-copy">&copy; 2026 麹の蔵. All rights reserved.</div>
+</footer>
+
+<script>
+  // サムネイル切り替え
+  function setThumb(el, emoji) {
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('mainEmoji').textContent = emoji;
+  }
+
+  // バリエーション選択
+  function selectVar(el) {
+    document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // 数量変更
+  function changeQty(d) {
+    const input = document.getElementById('qty');
+    const v = Math.max(1, Math.min(99, parseInt(input.value) + d));
+    input.value = v;
+  }
+
+  // カート追加
+  function addCart() {
+    const btn = document.querySelector('.btn-add-cart');
+    btn.textContent = '✓ カートに追加しました';
+    btn.style.background = '#4a7c59';
+    setTimeout(() => {
+      btn.textContent = 'カートに入れる';
+      btn.style.background = '';
+    }, 2500);
+  }
+</script>
+
+</body>
+</html>
